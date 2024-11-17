@@ -1,0 +1,28 @@
+.box {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #edf1ed;
+}
+
+.google-login {
+  background-color: white;
+  color: black;
+  border-color: green;
+}
+
+.google-login:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.image {
+  width: 20px; /* Chiều rộng hình ảnh */
+  height: 20px; /* Chiều cao hình ảnh */
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.require::after {
+  content: " *";
+  color: red;
+}

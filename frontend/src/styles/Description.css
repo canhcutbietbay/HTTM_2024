@@ -1,0 +1,164 @@
+.content {
+  margin-top: 100px;
+}
+.custom-text {
+  text-align: justify;
+}
+.exmimg {
+}
+#post-recipe {
+  padding: 10px 15px;
+  background-color: #28a745; /* Màu xanh cho nút */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 150px;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+#post-recipe:hover {
+  background-color: #218838; /* Màu xanh đậm khi hover */
+}
+/*  */
+.post-modal {
+  display: block; /* Ẩn modal mặc định */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5); /* Nền mờ */
+}
+.form-content {
+  background-color: #ffffff; /* Nền trắng cho nội dung modal */
+  margin: 1% auto; /* 10% từ trên và giữa */
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px; /* Bo góc cho modal */
+  width: 80%; /* Chiều rộng modal */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Đổ bóng cho modal */
+}
+form {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  margin: auto;
+}
+
+label {
+  margin: 10px 0 5px;
+}
+
+input,
+textarea {
+  margin-bottom: 10px;
+  padding: 8px;
+  font-size: 14px;
+}
+
+button {
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.ingredient-input {
+  margin-right: 10px;
+}
+
+.ingredient-container {
+  margin-bottom: 10px;
+}
+
+/* Tăng kích thước chữ và in đậm cho các label */
+form label {
+  font-size: 1.2em;
+  font-weight: bold;
+  display: block;
+  margin-top: 10px;
+  color: #333;
+}
+
+/* Dấu * màu đỏ */
+label.import::after {
+  content: "*";
+  color: red;
+  font-weight: bolder;
+}
+
+/* Thay đổi kích thước chữ trong form */
+.form-content input[type="text"],
+.form-content input[type="url"],
+.form-content input[type="file"],
+.form-content select,
+.form-content textarea {
+  font-size: 16px; /* Kích thước chữ lớn hơn */
+}
+
+/* In đậm cho các label và dấu * màu đỏ */
+.form-content label {
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+/* In đậm cho nút */
+.form-content button[type="submit"] {
+  font-weight: bold;
+  padding: 10px 20px;
+  background-color: #259f09;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.form-content button[type="submit"]:hover {
+  background-color: #045c0e;
+}
+
+/* Tăng kích thước chữ cho các input và textarea */
+/* Định dạng cho các trường nhập liệu văn bản, URL và file */
+form input[type="text"],
+form input[type="url"],
+form input[type="file"] {
+  width: 100%; /* Chiếm toàn bộ chiều rộng của form */
+  padding: 10px; /* Đệm trong */
+  margin: 5px 0; /* Khoảng cách bên ngoài */
+  box-sizing: border-box; /* Đảm bảo padding và border được bao gồm trong chiều rộng */
+  border: 1px solid #ccc; /* Đường viền */
+  border-radius: 4px; /* Bo góc */
+}
+
+/* Định dạng cho textarea */
+form textarea {
+  width: 100%;
+  height: 150px; /* Chiều cao */
+  padding: 10px;
+  margin: 5px 0;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Định dạng cho select */
+form select {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff; /* Màu nền */
+  appearance: none; /* Ẩn mũi tên mặc định trên một số trình duyệt */
+}

@@ -1,0 +1,106 @@
+/* Navbar.css */
+.navbar {
+  background-color: #18b00d;
+  /* padding: 0.5rem 1rem; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+}
+.navbar-brand {
+  color: white; /* Thay đổi màu chữ theo ý muốn của bạn */
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.search-box {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+.search-history {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.search-history div {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.search-history div:hover {
+  background-color: #f0f0f0;
+}
+
+.clear-history {
+  font-weight: bold;
+  color: red;
+  text-align: center;
+}
+
+.clear-history:hover {
+  text-decoration: underline;
+}
+
+.account-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 1rem;
+  position: relative;
+}
+
+.account-btn img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.account-menu {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  width: max-content;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.2s;
+}
+
+.account-menu.show {
+  visibility: visible; /* Hiển thị menu */
+  opacity: 1; /* Thiết lập độ trong suốt hiển thị */
+}
+
+.account-menu a {
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: black;
+}
+
+.account-menu a:hover {
+  background-color: #f0f0f0;
+}
+
+.login-btn {
+  width: auto;
+  height: 40px;
+  /* border-radius: 50%; */
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  flex-shrink: 0;
+}
