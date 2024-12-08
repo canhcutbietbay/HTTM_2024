@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
@@ -14,6 +14,10 @@ const LoginSignup = () => {
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("userEmail")) navigate("/");
+  }, []);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -50,6 +54,7 @@ const LoginSignup = () => {
       );
 
       if (response.status === 200) {
+        localStorage.setItem("userEmail", formData.email);
         navigate("/"); // Điều hướng sang trang chính
       } else {
         setError(
@@ -80,8 +85,6 @@ const LoginSignup = () => {
         );
 
         if (response.status === 200) {
-          const setCookieHeader = response.headers.get("Set-Cookie");
-          console.log("Set-Cookie Header:", setCookieHeader);
           navigate("/"); // Điều hướng sang trang chính
         } else {
           setError(

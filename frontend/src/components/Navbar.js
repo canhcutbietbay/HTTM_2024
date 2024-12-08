@@ -3,10 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { Navbar, Container, Form, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/Navbar.css";
-import { getAuthHeader } from "../utils/Jwt";
 import axios from "axios";
 
-function Nav({ userImage, onBrandClick, onSearch, searchChange }) {
+function Nav({ userImage, onSearch, searchChange }) {
   const [menuVisible, setMenuVisible] = useState(false);
   const [searchHistoryVisible, setSearchHistoryVisible] = useState(false);
   const [searchHistory, setSearchHistory] = useState([]);
@@ -45,9 +44,6 @@ function Nav({ userImage, onBrandClick, onSearch, searchChange }) {
     setSearchHistory([]);
     try {
       await axios.delete("https://26.216.17.44:3000/api/history", {
-        headers: {
-          Authorization: getAuthHeader(),
-        },
         withCredentials: true,
       });
     } catch (error) {
@@ -93,11 +89,13 @@ function Nav({ userImage, onBrandClick, onSearch, searchChange }) {
         .then(() => console.log("new search: ", searchQuery.trim()));
     }
     searchRecipes(searchQuery.trim());
+    setSearchHistoryVisible(false);
   };
 
   const searchRecipes = async (query) => {
     try {
       onSearch(query);
+
       // console.log(query);
     } catch (error) {
       console.error("Error fetching search results:", error);
@@ -119,6 +117,18 @@ function Nav({ userImage, onBrandClick, onSearch, searchChange }) {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await axios.get("https://26.216.17.44:3000/api/logout", {
+        withCredentials: true,
+      });
+      localStorage.removeItem("userEmail");
+      navigate("/login");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
   useEffect(() => {
     setIsHome(typeof onSearch === "function");
     if (isHome) {
@@ -137,7 +147,7 @@ function Nav({ userImage, onBrandClick, onSearch, searchChange }) {
           as={Link}
           to="/"
           className="navbar-brand"
-          onClick={onBrandClick}
+          // onClick={onBrandClick}
         >
           <img
             src={`${process.env.PUBLIC_URL}/logo.png`}
@@ -198,8 +208,13 @@ function Nav({ userImage, onBrandClick, onSearch, searchChange }) {
             event.stopPropagation();
           }}
         >
+          <p>
+            <b>{localStorage.getItem("userEmail")}</b>
+          </p>
           {isHome ? <Link to="/profile">My Recipes</Link> : <span></span>}
-          <Link to="/login">Log out</Link>
+          <a onClick={handleLogout} style={{ cursor: "pointer", color: "red" }}>
+            Log out
+          </a>
         </div>
       </Container>
     </Navbar>

@@ -3,6 +3,8 @@ import { Container, Button } from "react-bootstrap";
 import RecipeItem from "./RecipeItem";
 import RecipeDetail from "./RecipeDetail";
 import "bootstrap/dist/css/bootstrap.min.css";
+import axios from "axios"; // Thay thế fetch bằng axios
+import Swal from "sweetalert2";
 
 const RecipeList = ({ recipesProfile, recipes, isHome, searchChange }) => {
   const [selectedTab, setSelectedTab] = useState(isHome ? "new" : "post");
@@ -10,7 +12,10 @@ const RecipeList = ({ recipesProfile, recipes, isHome, searchChange }) => {
   const [likedRecipes, setLikedRecipes] = useState([]);
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [selfRecipes, setSelfRecipes] = useState([]);
-
+  const [commentedRecipes, setCommentedRecipes] = useState([]);
+  const [recentLike, setRecentLike] = useState([]);
+  const [recentSave, setRecentSave] = useState([]);
+  const [recentComment, setRecentComment] = useState([]);
   const [visibleData, setVisibleData] = useState([]);
   const [batchSize, setBatchSize] = useState(10); // Số lượng dữ liệu mỗi đợt
   const [currentBatch, setCurrentBatch] = useState(1);
@@ -21,8 +26,8 @@ const RecipeList = ({ recipesProfile, recipes, isHome, searchChange }) => {
       updateState();
     }
     if (!isHome) updateState();
-    return () => {};
-  }, [recipes, recipesProfile, isHome, searchChange]);
+    // return () => {};
+  }, [recipes, recipesProfile, isHome, searchChange]); //
 
   const loadMoreData = () => {
     const nextBatch = currentBatch + 1;
@@ -34,25 +39,35 @@ const RecipeList = ({ recipesProfile, recipes, isHome, searchChange }) => {
     const likedIdRecipes = [];
     const savedIdRecipes = [];
     const selfIdRecipes = [];
+    const commentedIdRecipes = [];
     if (recipesProfile.like) {
       recipesProfile.like.forEach((recipe) => {
-        likedIdRecipes.push(recipe.Id);
+        likedIdRecipes.push(recipe.Id_recipe);
       });
     }
+    likedIdRecipes.push(...recentLike);
     if (recipesProfile.save) {
       recipesProfile.save.forEach((recipe) => {
-        savedIdRecipes.push(recipe.Id);
+        savedIdRecipes.push(recipe.Id_recipe);
       });
     }
+    savedIdRecipes.push(...recentSave);
     if (recipesProfile.post) {
       recipesProfile.post.forEach((recipe) => {
-        selfIdRecipes.push(recipe.Id);
+        selfIdRecipes.push(recipe.Id_recipe);
       });
     }
+    if (recipesProfile.comment) {
+      recipesProfile.comment.forEach((recipe) => {
+        commentedIdRecipes.push(recipe.Id);
+      });
+    }
+    commentedIdRecipes.push(...recentComment);
     setLikedRecipes(likedIdRecipes);
     setSavedRecipes(savedIdRecipes);
     setSelfRecipes(selfIdRecipes);
-    console.log(recipesProfile);
+    setCommentedRecipes(commentedIdRecipes);
+    // console.log(recipesProfile);
   };
 
   const handleItemClick = (recipe) => {
@@ -70,6 +85,65 @@ const RecipeList = ({ recipesProfile, recipes, isHome, searchChange }) => {
   const getFilteredRecipes = () => {
     if (selectedTab === "new") return visibleData;
     return recipes[selectedTab] || [];
+  };
+
+  const handleDelete = async (recipeId) => {
+    Swal.fire({
+      title: "Do you actually want to delete your recipe?",
+      text: "This action cannot be undo!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(
+            `https://26.216.17.44:3000/api/recipes/${recipeId}`,
+            {
+              withCredentials: true,
+            }
+          );
+          window.location.reload();
+          console.log("Delete!");
+        } catch (error) {
+          console.error("Error deleting recipe:", error);
+        }
+      }
+    });
+  };
+
+  const addComment = (commentId) => {
+    setCommentedRecipes([...commentedRecipes, commentId]);
+    setRecentComment([...recentComment, commentId]);
+  };
+
+  const Like = (recipeId) => {
+    setLikedRecipes([...likedRecipes, recipeId]);
+    setRecentLike([...recentLike, recipeId]);
+    const like = recipes[selectedTab].find((recipe) => recipe.Id === recipeId);
+    like.FavoriteCount += 1;
+  };
+
+  const Unlike = (recipeId) => {
+    const change = likedRecipes.filter((id) => id !== recipeId);
+    setLikedRecipes(change);
+    const like = recipes[selectedTab].find((recipe) => recipe.Id === recipeId);
+    like.FavoriteCount -= 1;
+    setRecentLike(recentLike.filter((id) => id !== recipeId));
+  };
+
+  const Save = (recipeId) => {
+    setSavedRecipes([...savedRecipes, recipeId]);
+    setRecentSave([...recentSave, recipeId]);
+  };
+
+  const Unsave = (recipeId) => {
+    const change = savedRecipes.filter((id) => id !== recipeId);
+    setSavedRecipes(change);
+    setRecentSave(recentSave.filter((id) => id !== recipeId));
   };
 
   return (
@@ -139,20 +213,15 @@ const RecipeList = ({ recipesProfile, recipes, isHome, searchChange }) => {
               <RecipeItem
                 key={index}
                 recipe={recipe}
-                liked={likedRecipes.includes(recipe.Id)} // Truyền trạng thái liked
-                saved={savedRecipes.includes(recipe.Id)} // Truyền trạng thái saved
-                self={selfRecipes.includes(recipe.Id)}
+                like={{ Like, Unlike, liked: likedRecipes.includes(recipe.Id) }} // Truyền trạng thái liked
+                save={{ Save, Unsave, saved: savedRecipes.includes(recipe.Id) }} // Truyền trạng thái saved
+                self={selfRecipes.includes(recipe.Id) ? handleDelete : null}
                 onClick={handleItemClick}
               />
             ))}
           </>
-        ) : // <Button onClick={} variant="success">
-        //   Load More
-        // </Button>
-        isHome ? (
-          <>Please wait...</>
         ) : (
-          <></>
+          <>No information</>
         )}
         {selectedTab === "new" && visibleData.length < recipes.new.length && (
           <Button onClick={loadMoreData} variant="success">
@@ -161,7 +230,12 @@ const RecipeList = ({ recipesProfile, recipes, isHome, searchChange }) => {
         )}
       </Container>
       {selectedRecipe && (
-        <RecipeDetail recipe={selectedRecipe} onClose={handleCloseDetail} />
+        <RecipeDetail
+          recipe={selectedRecipe}
+          selfComments={commentedRecipes}
+          onAdd={addComment}
+          onClose={handleCloseDetail}
+        />
       )}
     </>
   );

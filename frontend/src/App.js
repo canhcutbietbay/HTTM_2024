@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -9,7 +9,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import Home from "./components/Home";
 import Profile from "./components/Profile";
 import Login from "./components/Sign";
-import PrivateRoute from "./components/PrivateRoute";
+// import PrivateRoute from "./components/PrivateRoute";
 
 const App = () => {
   return (

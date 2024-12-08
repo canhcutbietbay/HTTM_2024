@@ -80,3 +80,20 @@
   border: 1px solid #ddd;
   border-radius: 5px;
 }
+.action-btn {
+  padding: 5px 10px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: black;
+  background-color: #ebe7e7;
+  transition: background-color 0.3s;
+}
+
+.comment-actions {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+}

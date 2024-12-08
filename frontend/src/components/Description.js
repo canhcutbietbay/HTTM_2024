@@ -4,7 +4,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/Description.css";
 import exmjpg from "../assets/header_background.jpg";
 import uploadImageToImgBB from "../utils/Image";
-import { getCookie, getAuthHeader } from "../utils/Jwt";
 import axios from "axios";
 
 const Description = () => {
@@ -60,25 +59,6 @@ const Description = () => {
       .get("https://26.216.17.44:3000/api/ingredients")
       .then((response) => setIngredientOptions(response.data))
       .catch((error) => console.error("Error fetching ingredients:", error));
-    //------------------TEST
-    // fetch("./cuisine.json")
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     console.log(data);
-    //     setCuisines(
-    //       data.map((cuisine) => ({
-    //         id: cuisine.Id,
-    //         name: cuisine.Area,
-    //       }))
-    //     );
-    //   });
-    // fetch("./ingredients.json")
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     console.log(data);
-    //     setIngredientOptions(data);
-    //   });
-    // ------------------TEST
     const handleClickOutside = (event) => {
       if (formRef.current && !formRef.current.contains(event.target)) {
         setIsFormVisible(false);
@@ -117,7 +97,7 @@ const Description = () => {
         list[index][name] = value;
       }
     } else {
-      list[index][name] = value.trim();
+      list[index][name] = value;
     }
 
     setIngredients(list);
@@ -147,7 +127,7 @@ const Description = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const postData = {
       name: recipe.name,
@@ -155,7 +135,7 @@ const Description = () => {
       category: recipe.category,
       instruction: recipe.instructions,
       image_url: imageUrl, // Sử dụng URL của ảnh đã upload
-      video_url: recipe.video_url,
+      video_url: recipe.video_url ? recipe.video_url : "",
       tags: recipe.tags,
       ingredients: ingredients.map((ingredient) => ({
         Id: ingredient.id,
@@ -164,7 +144,7 @@ const Description = () => {
     };
     console.log(postData);
     // Gửi dữ liệu tới server
-    axios
+    await axios
       .post("https://26.216.17.44:3000/api/recipes", postData, {
         headers: {
           "Content-Type": "application/json",
@@ -173,10 +153,12 @@ const Description = () => {
       })
       .then((response) => {
         console.log("Success:", response.data);
+        setIsFormVisible(false);
       })
       .catch((error) => {
         console.error("Error:", error);
       });
+    window.location.reload();
   };
 
   return (
@@ -298,23 +280,30 @@ const Description = () => {
               required
             ></textarea>
 
-            <label>Image</label>
-            <input type="file" accept="image/*" onChange={handleFileChange} />
+            <label className="import">Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              required
+            />
 
-            <label>Video URL (Youtube link)</label>
+            <label className="import">Video URL (Youtube link)</label>
             <input
               type="url"
               name="video_url"
               value={recipe.video_url}
               onChange={handleInputChange}
+              required
             />
 
-            <label>Tags</label>
+            <label className="import">Tags</label>
             <input
               type="text"
               name="tags"
               value={recipe.tags}
               onChange={handleInputChange}
+              required
             />
             {selectedImage && (
               <div className="image-preview">

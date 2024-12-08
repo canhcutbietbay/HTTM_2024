@@ -2,18 +2,17 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/RecipeItem.css";
 import axios from "axios"; // Thay thế fetch bằng axios
-import Swal from "sweetalert2";
 
-const RecipeItem = ({ recipe, liked, saved, self, onClick }) => {
+const RecipeItem = ({ recipe, like, save, self, onClick }) => {
   const [likes, setLikes] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     setLikes(recipe.FavoriteCount ? recipe.FavoriteCount : 0);
-    setIsLiked(liked);
-    setIsSaved(saved);
-  }, [recipe, liked, saved]);
+    setIsLiked(like.liked);
+    setIsSaved(save.saved);
+  }, [recipe, like.liked, save.saved]);
 
   const handleLike = async (e) => {
     e.stopPropagation(); // Ngăn sự kiện onClick của thẻ cha
@@ -29,6 +28,7 @@ const RecipeItem = ({ recipe, liked, saved, self, onClick }) => {
             withCredentials: true,
           }
         );
+        like.Like(recipe.Id);
       } else {
         await axios.delete(
           `https://26.216.17.44:3000/api/favorite?recipe_id=${recipe.Id}`,
@@ -36,6 +36,7 @@ const RecipeItem = ({ recipe, liked, saved, self, onClick }) => {
             withCredentials: true,
           }
         );
+        like.Unlike(recipe.Id);
       }
     } catch (error) {
       console.error("Error updating like status:", error);
@@ -58,6 +59,7 @@ const RecipeItem = ({ recipe, liked, saved, self, onClick }) => {
             withCredentials: true,
           }
         );
+        save.Save(recipe.Id);
       } else {
         await axios.delete(
           `https://26.216.17.44:3000/api/save?recipe_id=${recipe.Id}`,
@@ -65,6 +67,7 @@ const RecipeItem = ({ recipe, liked, saved, self, onClick }) => {
             withCredentials: true,
           }
         );
+        save.Unsave(recipe.Id);
       }
     } catch (error) {
       console.error("Error updating save status:", error);
@@ -93,28 +96,9 @@ const RecipeItem = ({ recipe, liked, saved, self, onClick }) => {
     // } else {
     //   console.log("Cancel");
     // }
-    Swal.fire({
-      title: "Do you actually want to delete your recipe?",
-      text: "This action cannot be undo!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Delete",
-      cancelButtonText: "Cancel",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        console.log("Delete!");
-        try {
-          axios.delete(`https://26.216.17.44:3000/api/recipes/${recipe.Id}`, {
-            withCredentials: true,
-          });
-        } catch (error) {
-          console.error("Error deleting recipe:", error);
-        }
-      }
-    });
+    self(recipe.Id);
   };
+
   const tags = Array.isArray(recipe.Tags)
     ? recipe.Tags
     : recipe.Tags.split(",").map((tag) => tag.trim());
@@ -124,6 +108,9 @@ const RecipeItem = ({ recipe, liked, saved, self, onClick }) => {
       <img src={recipe.Image_url} alt={recipe.Name} className="recipe-image" />
       <div className="recipe-info">
         <div className="recipe-name">{recipe.Name}</div>
+        <div className="recipe-area" hidden={recipe.DisplayName ? false : true}>
+          by {recipe.DisplayName}
+        </div>
         <div className="recipe-area">Area: {recipe.Area}</div>
         <div className="recipe-category">Category: {recipe.Category}</div>
         <div className="recipe-tags">{tags.join(" #")}</div>
@@ -141,7 +128,7 @@ const RecipeItem = ({ recipe, liked, saved, self, onClick }) => {
         >
           <i className="fas fa-star"></i>
         </button>
-        {self ? (
+        {typeof self != "object" ? (
           <button
             className={`action-btn delete-btn`}
             onClick={handleDelete} // Sử dụng handleDelete trực tiếp
